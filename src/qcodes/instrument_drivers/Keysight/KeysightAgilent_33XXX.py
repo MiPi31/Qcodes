@@ -213,7 +213,7 @@ class Keysight33xxxOutputChannel(InstrumentChannel["Keysight33xxx"]):
         """Parameter trigger_slope"""
 
         # Older models do not have all the fancy trigger options
-        if self._parent.model[2] in ["5", "6"]:
+        if self._parent.model[2] in ["5", "6"] or self._parent.model in "EDU33212A":
             self.trigger_count: Parameter = self.add_parameter(
                 "trigger_count",
                 label=f"Channel {channum} trigger count",
@@ -476,6 +476,7 @@ class Keysight33xxx(KeysightErrorQueueMixin, VisaInstrument):
         # TODO: Fill out this dict with all models
         no_of_channels = {
             "33210A": 1,
+            "EDU33212A": 2,
             "33250A": 1,
             "33510B": 2,
             "33511B": 1,
@@ -490,6 +491,7 @@ class Keysight33xxx(KeysightErrorQueueMixin, VisaInstrument):
 
         self._max_freqs = {
             "33210A": 10e6,
+            "EDU33212A": 20e6,
             "33250A": 80e6,
             "33510B": 20e6,
             "33511B": 20e6,
@@ -505,6 +507,7 @@ class Keysight33xxx(KeysightErrorQueueMixin, VisaInstrument):
         # Refer to instruments User's guides
         self._max_srate = {
             "33210A": 50e6,
+            "EDU33212A": 250e6,
             "33250A": 200e6,
             "33510B": 160e6,
             "33511B": 160e6,
@@ -612,3 +615,17 @@ class Keysight33xxxDualChannels(Keysight33xxx):
         """
         Output channel 2
         """
+
+class KeysightEDU33212A(Keysight33xxxDualChannels):
+    """
+    Driver for the Keysight EDU33212A 2-channel waveform generator.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        address: str,
+        silent: bool = False,
+        **kwargs: "Unpack[VisaInstrumentKWArgs]",
+    ):
+        super().__init__(name, address, silent=silent, **kwargs)

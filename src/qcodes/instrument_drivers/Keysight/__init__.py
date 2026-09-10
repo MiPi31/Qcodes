@@ -54,6 +54,7 @@ from .KeysightAgilent_33XXX import (
     Keysight33xxxOutputChannel,
     Keysight33xxxSingleChannel,
     Keysight33xxxSyncChannel,
+    KeysightEDU33212A,
 )
 from .keysightb1500.KeysightB1500_base import KeysightB1500
 from .keysightb1500.KeysightB1500_module import KeysightB1500Module
@@ -84,6 +85,7 @@ __all__ = [
     "Keysight33xxxOutputChannel",
     "Keysight33xxxSingleChannel",
     "Keysight33xxxSyncChannel",
+    "KeysightEDU33212A",
     "Keysight344xxA",
     "Keysight344xxADisplay",
     "Keysight344xxASample",
