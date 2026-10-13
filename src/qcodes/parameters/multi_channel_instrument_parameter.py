@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
     from .parameter_base import ParamRawDataType
 
-_LOG = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class MultiChannelInstrumentParameter[InstrumentModuleType: "InstrumentModule"](
@@ -61,12 +61,14 @@ class MultiChannelInstrumentParameter[InstrumentModuleType: "InstrumentModule"](
         try:
             for chan in self._channels:
                 getattr(chan, self._param_name).set(value)
-        except Exception as err:
+        except Exception as err:  # noqa: BLE001 re-raised below unless the fallback below succeeds
             try:
                 # Catch wrong length of value before any setting is done
                 value_list = list(value)
                 if len(value_list) != len(self._channels):
-                    raise ValueError
+                    raise ValueError(
+                        "Length of value sequence does not match the number of channels"
+                    )
                 for chan, val in zip(self._channels, value_list):
                     getattr(chan, self._param_name).set(val)
             except (TypeError, ValueError):
@@ -88,18 +90,3 @@ class MultiChannelInstrumentParameter[InstrumentModuleType: "InstrumentModule"](
         """
 
         return self.names
-
-
-if not TYPE_CHECKING:
-    from typing import TypeVar
-
-    from qcodes.utils.deprecate import _make_deprecated_typevars_getattr
-
-    __getattr__ = _make_deprecated_typevars_getattr(
-        __name__,
-        {
-            "InstrumentModuleType": TypeVar(
-                "InstrumentModuleType", bound="InstrumentModule"
-            ),
-        },
-    )
